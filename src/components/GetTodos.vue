@@ -1,26 +1,28 @@
 <template>
-  <ol>
-    <section class="wrapper" v-for="todo in todoList" :key="todo.id">
-      <div v-if="!todo.isCompleted" class="container">
-        <div class="clickable-container" @click="setCompleted(todo.id)">
-          <li>
-            {{todo.title}}
-          </li>
+  <div class="wrapper">
+    <div class="main-container">
+      <h2>Att göra</h2>
+      <div v-for="todo in todoList" :key="todo.id">
+        <div v-if="todo.isCompleted" class="wrapper-inside">
+          <div @click="setCompleted(todo.id)" class="todo-completed">
+            <p>{{todo.title}}</p>
+            <p>{{todo.date}}</p>
+          </div>
+          <button class="delete-btn" @click="deleteTodo(todo.id)"><img src="../assets/crossmark-transparent.png"
+              width="32" height="32"></button>
         </div>
-        <img class="checkmark-grayscale" src="../assets/checkmark-png-25977.png" width="30" height="30">
-        <button class="delete-btn" @click="deleteTodo(todo.id)">X</button>
+        <div v-else class="wrapper-inside">
+          <div @click="setCompleted(todo.id)" class="todo">
+            <p>{{todo.title}}</p>
+            <p>{{todo.date}}</p>
+          </div>
+            <button class="delete-btn" @click="deleteTodo(todo.id)"><img src="../assets/crossmark-transparent.png"
+              width="32" height="32"></button>
+        </div>
       </div>
-      <div v-else class="container">
-        <div class="clickable-container" @click="setCompleted(todo.id)">
-          <li>
-            {{todo.title}}
-          </li>
-        </div>
-          <img class="checkmark-grayscale-completed" src="../assets/checkmark-png-25977.png" width="30" height="30">
-          <button class="delete-btn" @click="deleteTodo(todo.id)">X</button>
-        </div>
-    </section>
-  </ol>
+    </div>
+  </div>
+
   <button @click="deleteAll()" class="deleteAll-btn">Ta bort alla poster</button>
 </template>
 
@@ -41,6 +43,7 @@ export default {
       tempTodoObj.id = doc.id;
       tempTodoObj.title = doc.data().title;
       tempTodoObj.isCompleted = doc.data().isCompleted;
+      tempTodoObj.date = doc.data().date;
       this.todoList.push(tempTodoObj);
     });
     console.table(this.todoList);
@@ -79,49 +82,65 @@ export default {
 </script>
 
 <style scoped>
-ol
-{
-  width: 100%;
-  color: white;
-  padding: 0;
-}
-
 .wrapper
 {
   display: flex;
   justify-content: center;
 }
 
-.container
+.main-container
+{
+  width: 700px;
+  height: 600px;
+  background: #0f1835;
+  padding: 20px;
+  margin: 30px 0px;
+  border-radius: 20px;
+}
+
+.wrapper-inside
 {
   display: flex;
-  justify-content: center;
-  margin: 20px 0px;
-  width: 80%;
-  border: 1px solid black;
-  border-radius: 100px;
-  filter:drop-shadow(0px 0px 5px #4444d1) brightness(110%);
-  box-shadow: 1px 1px 50px 20px #0f1835 inset;
-  padding: 20px;
+  gap: 10px;
+  align-items: center;
 }
 
-.container li
+.todo
 {
+  width: 90%;
   text-align: left;
-  width: 250px;
-  font-size: 20px;
-  font-weight: 900;
+  border: 1px solid gray;
+  border-radius: 10px;
+  padding: 0px 10px;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0px;
 }
 
-.clickable-container
-{
-  width: 50%;
-}
-
-.clickable-container:hover
+.todo:hover
 {
   cursor: pointer;
 }
+
+.todo-completed
+{
+  width: 90%;
+  text-align: left;
+  border: 1px solid green;
+  border-radius: 10px;
+  padding: 0px 10px;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0px;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.todo-completed:hover
+{
+  cursor: pointer;
+}
+
 
 .delete-btn
 {
@@ -129,13 +148,14 @@ ol
   border: none;
   font-size: 20px;
   font-weight: 900;
-  color: gray;
   transition: .5s ease;
+  filter:grayscale(100);
 }
 
 .delete-btn:hover
 {
-  color: red;
+  cursor: pointer;
+  filter:grayscale(0);
 }
 
 .deleteAll-btn
@@ -154,15 +174,13 @@ ol
 
 .deleteAll-btn:hover
 {
-  filter:drop-shadow(0px 0px 10px #4444d1) brightness(110%)
+  filter: drop-shadow(0px 0px 10px #4444d1) brightness(110%)
 }
 
 .checkmark-grayscale
 {
   width: 30px;
   height: 30px;
-  position: absolute;
-  left: 950px;
   filter: grayscale(100);
 }
 
@@ -170,14 +188,35 @@ ol
 {
   width: 30px;
   height: 30px;
-  position: absolute;
-  left: 950px;
   filter: grayscale(0);
 }
 
-::marker
-{
-  font-size: 30px;
-}
 
+@media screen and (max-width: 425px)
+{
+  h2
+  {
+    margin: 0;
+    padding-top: 8px;
+    font-size: 15px;
+  }
+
+  .wrapper
+  {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .container
+  {
+    width: 100%;
+    gap: 40px;
+  }
+
+  .container li
+  {
+    font-size: 12px;
+    align-items: center;
+  }
+}
 </style>
